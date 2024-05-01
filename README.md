@@ -3,7 +3,7 @@
 
 ## Introduction
 
-Hello, I'm Daniel Dennis, a new web developer, and I'm excited to introduce my Task Board application. This application is designed to help project team members organize their tasks efficiently, manage their state of progress, and track overall project progress.
+Hello, I'm Daniel Dennis, I am new web developer, and I'm excited to introduce my Task Board application. This application is designed to help project team members organize their tasks efficiently, manage their state of progress, and track overall project progress.
 
 # Task Board Application
 ![Task board img](<assets/Screenshot 2024-04-30 213112.png>)
@@ -19,7 +19,7 @@ As a project team member with multiple tasks to organize, you can use the Task B
 ## Features
 
 - **Task Organization**: Easily add, edit, and delete individual tasks for your projects.
-- **Task State Management**: Manage the state of each task (e.g., to-do, in progress, completed).
+- **Task State Management**: Manage the state of each task ( to-do, in progress, completed).
 - **Project Progress Tracking**: Track the overall progress of your project by monitoring the completion status of tasks.
 
 ## Getting Started
