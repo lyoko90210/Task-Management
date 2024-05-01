@@ -3,10 +3,13 @@ let taskList = JSON.parse(localStorage.getItem("tasks"));
 let nextId = JSON.parse(localStorage.getItem("nextId"));
 
 
-
-
+$( function() {
+    $( "#datepicker" ).datepicker();
+  } );
+ 
 // Todo: create a function to generate a unique task id
 function generateTaskId() {
+
 
 }
 
@@ -39,3 +42,6 @@ function handleDrop(event, ui) {
 $(document).ready(function () {
 
 });
+
+
+
