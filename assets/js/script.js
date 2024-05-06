@@ -5,7 +5,8 @@ let tasktitle = document.getElementById('tasktitle');
 let date = document.getElementById('datepicker');
 let textarea= document.getElementById('notes');
 const submit = document.getElementById("addtask");
-
+let delBtn = document.getElementsByClassName('btn btn-danger delete-btn')
+let tasks = JSON.parse(localStorage.getItem("Ntasks")) || [];
 
 
 // date picker from jquery
@@ -31,7 +32,7 @@ const task = {
     status: "todo"
 };
 
-    let tasks = JSON.parse(localStorage.getItem("Ntasks")) || [];
+  
 
     tasks.push(task)
 
@@ -54,7 +55,7 @@ function generateTaskId() {
 function createTaskCard(task) {
     // Create card element
     const card = $("<div>")
-    .addClass("card text-bg-primary mb-3 drag")
+    .addClass("card text-bg-primary mb-3 drag ")
     .attr("data-id", task.id)
     .css("max-width", "18rem"); 
 
@@ -74,6 +75,7 @@ function createTaskCard(task) {
     //  delete button
     const delBtn = $("<button>").addClass("btn btn-danger delete-btn").text("Delete").attr("data-id", task.id);
 
+
     // Append card title, text, and delete button to card body
     cardBody.append(cardTitle, cardText, delBtn);
 
@@ -82,10 +84,10 @@ function createTaskCard(task) {
     console.log(card)
     // Append card to dom 
     $("#todo").append(card);
-}
 
-// Call the function with the task object
-//createTaskCard(task);
+
+
+}
 
 
 /// Todo: create a function to render the task list and make cards draggable
@@ -101,69 +103,89 @@ function renderTaskList() {
     }
 
     $(".drag").draggable({
-        zIndex: 900 
+        zIndex: 1000
     });
+
     
 }
-
 
 
 // Todo: create a function to handle adding a new task
 function handleAddTask(event){
 
+
+
 }
 
 // Todo: create a function to handle deleting a task
+
 function handleDeleteTask(event) {
-    
-   
+    // Get the ID of the task to delete from the data-id attribute of the clicked button
+    const taskId = $(event.target).attr("data-id");
 
-    // const taskId = $(event.target).attr("data-id");
+    // Find the card containing the task ID
+    const card = $(event.target).closest(".card[data-id='" + taskId + "']");
 
-    // // Find the index of the task with the matching ID in the tasks array
-    // const taskIndex = tasks.findIndex(task => task.id === taskId);
+    // Check if the card is found
+    if (card.length) {
+        // Remove the card from the DOM
+        card.remove();
 
-    // // Check if the task is found
-    // if (taskIndex !== -1) {
-    //     // Remove the task from the tasks array
-    //     tasks.splice(taskIndex, 1);
+        // Remove the task from the tasks array
+        const taskIndex = tasks.findIndex(task => task.id === taskId);
+        if (taskIndex !== -1) {
+            tasks.splice(taskIndex, 1);
+            // Update the tasks array in localStorage
+            localStorage.setItem("Ntasks", JSON.stringify(tasks));
+        }
+    }
 
-    //     // Update the tasks array in localStorage
-    //     localStorage.setItem("Ntask", JSON.stringify(tasks));
-
-    //     // Remove the card from the DOM
-    //     $(event.target).closest(".card").remove()
-    // }
-
-    // console.log(handleDeleteTask);
+    console.log('handleDeleteTask');
 }
 
-// Todo: create a function to handle dropping a task into a new status lane
-function handleDrop(event, ui) {
 
 
-    // $("#todo, #Progress, #done").droppable({
-    //     over: function(event, ui) {
-    //         // Check if the card is hovering over the "done" area
-    //         if ($(".card").attr("id") === "#done") {
-    //             // Add your code to execute when the card is hovering over the "done" area
-    //             $(this).addClass("ui-state-highlight").find("h5").html("Task complete!");
-    //         }
-    //     },
-    //     drop: function(event, ui) {
-    //         // Add drop handling logic here
-    //     }
-    // });
-
-
-}
-
-// Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
-$(document).ready(function () {
-    renderTaskList()
+// run the deletetask funtion on click 
+$(document).on("click", ".delete-btn", function() {
+    // Inside this function, "this" refers to the clicked delete button
+    const taskId = $(this).attr("data-id"); // Get the ID of the task to delete
+    handleDeleteTask(taskId); // Call the handleDeleteTask function with the task ID
 });
 
 
 
 
 
+
+
+
+
+// Todo: create a function to handle dropping a task into a new status lane
+function handleDrop(event, ui) {
+
+
+   const taskId = ui.draggable[0].dataset.taskId
+   const newStatus =event.target.id
+
+   for (let i = 0; i < tasks.length; i++) {
+   
+   
+    if (tasks[i].id===parseInt(taskId)) {
+        tasks[i].status= newStatus
+
+    }
+}
+localStorage.setItem('Ntasks', JSON.stringify(tasks))
+renderTaskList()
+
+}
+
+// Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
+$(document).ready(function () {
+    renderTaskList()        
+    $('.lane').droppable({
+        accpect:'.drag',
+        drop: handleDrop
+    })
+
+});
