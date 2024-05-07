@@ -29,10 +29,9 @@ const task = {
     tasktitle: tasktitle.value,
     datepicker: datepicker.value,
     notes: notes.value,
-    status: "todo"
+    status: "to-do"
 };
 
-  
 
     tasks.push(task)
 
@@ -56,7 +55,7 @@ function createTaskCard(task) {
     // Create card element
     const card = $("<div>")
     .addClass("card text-bg-primary mb-3 drag ")
-    .attr("data-id", task.id)
+    .attr("data-task-id", task.id)
     .css("max-width", "18rem"); 
 
 
@@ -73,33 +72,50 @@ function createTaskCard(task) {
     const cardText = $("<p>").addClass("card-text").text("Text: " + task.notes);
 
     //  delete button
-    const delBtn = $("<button>").addClass("btn btn-danger delete-btn").text("Delete").attr("data-id", task.id);
+    const delBtn = $("<button>").addClass("btn btn-danger delete-btn").text("Delete").attr("data-task-id", task.id);
+    delBtn.on("click", handleDeleteTask)
 
-
+    if (task.status === "done" || task.status === "done-cards") {
+        cardBody.addClass("btn-success"); // Changes div to green
+    } else if (task.status === "in-progress") {
+        cardBody.addClass("btn-warning"); // Changes div to yellow
+    }
+    
+    
+    
     // Append card title, text, and delete button to card body
     cardBody.append(cardTitle, cardText, delBtn);
 
     // Append card header and body to card
     card.append(cardHeader, cardBody);
     console.log(card)
-    // Append card to dom 
-    $("#todo").append(card);
-
-
+    return card
 
 }
 
-
 /// Todo: create a function to render the task list and make cards draggable
 function renderTaskList() { 
-    $("#todo").empty()
- 
+    $("#todo-cards").empty()
+    $('#in-progress-cards').empty()
+    $('#done-cards').empty()
     let tasks = JSON.parse(localStorage.getItem("Ntasks")) || [];
 
     for(let i =0; i < tasks.length; i++){
 
-        console.log("hello")
-        createTaskCard(tasks[i])
+        if(tasks[i].status === "to-do"){
+                $('#todo-cards').append( createTaskCard(tasks[i]))
+                
+        }
+        else if(tasks[i].status === "in-progress"){
+        $('#in-progress-cards').append( createTaskCard(tasks[i]))
+        
+    }
+
+    else{  $('#done-cards').append( createTaskCard(tasks[i]))
+
+    }
+      
+       
     }
 
     $(".drag").draggable({
@@ -113,18 +129,17 @@ function renderTaskList() {
 // Todo: create a function to handle adding a new task
 function handleAddTask(event){
 
-
-
 }
 
 // Todo: create a function to handle deleting a task
 
 function handleDeleteTask(event) {
     // Get the ID of the task to delete from the data-id attribute of the clicked button
-    const taskId = $(event.target).attr("data-id");
+    const taskId = $(this).attr("data-task-id");
+    console.log(taskId)
 
     // Find the card containing the task ID
-    const card = $(event.target).closest(".card[data-id='" + taskId + "']");
+    const card = $(event.target).closest(".card[data-task-id='" + taskId + "']");
 
     // Check if the card is found
     if (card.length) {
@@ -137,6 +152,7 @@ function handleDeleteTask(event) {
             tasks.splice(taskIndex, 1);
             // Update the tasks array in localStorage
             localStorage.setItem("Ntasks", JSON.stringify(tasks));
+            renderTaskList()
         }
     }
 
@@ -144,33 +160,18 @@ function handleDeleteTask(event) {
 }
 
 
-
-// run the deletetask funtion on click 
-$(document).on("click", ".delete-btn", function() {
-    // Inside this function, "this" refers to the clicked delete button
-    const taskId = $(this).attr("data-id"); // Get the ID of the task to delete
-    handleDeleteTask(taskId); // Call the handleDeleteTask function with the task ID
-});
-
-
-
-
-
-
-
-
-
 // Todo: create a function to handle dropping a task into a new status lane
 function handleDrop(event, ui) {
-
+    console.log("dropped")
 
    const taskId = ui.draggable[0].dataset.taskId
    const newStatus =event.target.id
+   console.log(taskId, newStatus)
 
    for (let i = 0; i < tasks.length; i++) {
    
    
-    if (tasks[i].id===parseInt(taskId)) {
+    if (tasks[i].id ===taskId) {
         tasks[i].status= newStatus
 
     }
@@ -184,7 +185,7 @@ renderTaskList()
 $(document).ready(function () {
     renderTaskList()        
     $('.lane').droppable({
-        accpect:'.drag',
+        accept:'.drag',
         drop: handleDrop
     })
 
