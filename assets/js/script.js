@@ -60,26 +60,29 @@ function createTaskCard(task) {
 
 
     // Create card header
-    const cardHeader = $("<div>").addClass("card-header h3").text( "Title:"+ task.tasktitle);
+    const cardHeader = $("<div>").addClass("card-header h3").text( ""+ task.tasktitle);
 
     // Create card body
     const cardBody = $("<div>").addClass("card-body");
 
     // card title
-    const cardTitle = $("<h5>").addClass("card-title").text("Date: " + task.datepicker);
+    const cardTitle = $("<h5>").addClass("card-title").text("" + task.datepicker);
 
     //  card text
-    const cardText = $("<p>").addClass("card-text").text("Text: " + task.notes);
+    const cardText = $("<p>").addClass("card-text").text("" + task.notes);
 
     //  delete button
     const delBtn = $("<button>").addClass("btn btn-danger delete-btn").text("Delete").attr("data-task-id", task.id);
     delBtn.on("click", handleDeleteTask)
 
     if (task.status === "done" || task.status === "done-cards") {
-        cardBody.addClass("btn-success"); // Changes div to green
+        cardBody.addClass("btn-success"); // Changes button to green
     } else if (task.status === "in-progress") {
-        cardBody.addClass("btn-warning"); // Changes div to yellow
+        cardBody.addClass("btn-warning"); // Changes button to yellow
+    } else if (task.status === "to-do") {
+        cardBody.addClass("btn-primary"); // Changes button to blue
     }
+    
     
     
     
